@@ -13,7 +13,7 @@
     "hardhat": "^2.6.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2",
+    "@openzeppelin/contracts": "^4.6.0",
     "web3-eth-abi": "^1.7.3"
   }
 }
