@@ -3,117 +3,10 @@ pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-
-abstract contract Pausable is Context {
-    /**
-     *  Emitted when the freeze is triggered by `account`.
-     */
-    event Frozen(address account);
-
-    /**
-     *  Emitted when the freeze is lifted by `account`.
-     */
-    event Unfrozen(address account);
-
-    bool private _frozen;
-
-    /**
-     *  Initializes the contract in unfrozen state.
-     */
-    constructor() {
-        _frozen = false;
-    }
-
-    /**
-     *  Returns true if the contract is frozen, and false otherwise.
-     */
-    function frozen() public view returns (bool) {
-        return _frozen;
-    }
-
-    /**
-     *  Modifier to make a function callable only when the contract is not frozen.
-     *
-     * Requirements:
-     *
-     * - The contract must not be frozen.
-     */
-    modifier whenNotFrozen() {
-        require(!frozen(), "Freezable: frozen");
-        _;
-    }
-
-    /**
-     *  Modifier to make a function callable only when the contract is frozen.
-     *
-     * Requirements:
-     *
-     * - The contract must be frozen.
-     */
-    modifier whenFrozen() {
-        require(frozen(), "Freezable: frozen");
-        _;
-    }
-
-    /**
-     *  Triggers stopped state.
-     *
-     * Requirements:
-     *
-     * - The contract must not be frozen.
-     */
-    function _freeze() internal whenNotFrozen {
-        _frozen = true;
-        emit Frozen(_msgSender());
-    }
-
-    /**
-     *  Returns to normal state.
-     *
-     * Requirements:
-     *
-     * - Can only be called by the current owner.
-     * - The contract must be frozen.
-     */
-    function _unfreeze() internal whenFrozen {
-        _frozen = false;
-        emit Unfrozen(_msgSender());
-    }
-}
-
-/**
- * @dev ERC1155 token with pausable token transfers, minting and burning.
- *
- * Useful for scenarios such as preventing trades until the end of an evaluation
- * period, or having an emergency switch for freezing all token transfers in the
- * event of a large bug.
- *
- * _Available since v3.1._
- */
-abstract contract ERC1155Pausable is ERC1155, Pausable {
-    /**
-     * @dev See {ERC1155-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(
-        address operator,
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual override {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
-
-        require(!frozen(), "ERC1155Pausable: token transfer while paused");
-    }
-}
 
 contract GDFCARD is
     Context,
@@ -148,7 +41,7 @@ contract GDFCARD is
         mint(msg.sender, 101, 1000, "SLIVER CARD");
         mint(msg.sender, 201, 2000, "GOD CARD");
         mint(msg.sender, 301, 3000, "PLATIUM CARD");
-        mint(msg.sender, 501, 5000, "DIMOND CARD");
+        mint(msg.sender, 501, 5000, "DIAMOND CARD");
     }
 
     /**
@@ -231,9 +124,9 @@ contract GDFCARD is
     function pause() public {
         require(
             hasRole(PAUSER_ROLE, _msgSender()),
-            "DoragonLandCards: must have pauser role to pause"
+            "GDFCARD: must have pauser role to pause"
         );
-        _freeze();
+        _pause();
     }
 
     /**
@@ -248,7 +141,7 @@ contract GDFCARD is
             hasRole(PAUSER_ROLE, _msgSender()),
             "GDFCARD: must have pauser role to unpause"
         );
-        _unfreeze();
+        _unpause();
     }
 
     /**
