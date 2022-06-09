@@ -22,6 +22,7 @@ contract HappyEnding is ERC20, AccessControl {
         _setupRole(OWNER_ROLE, msg.sender);
     }
 
+    // Add address permission miner
     function addSigner (address signer) public onlyRole(OWNER_ROLE) {
         require(signer != address(0), "signer is invalid");
         require(signers[signer] == false, "signer is exists");
@@ -29,6 +30,7 @@ contract HappyEnding is ERC20, AccessControl {
         emit SignerAdded(signer);
     }
 
+    // remove address permission miner
     function removeSigner (address signer) public onlyRole(OWNER_ROLE) {
         require(signer != address(0), "signer is invalid");
         require(signers[signer] == true, "signer is not exists");
@@ -36,23 +38,34 @@ contract HappyEnding is ERC20, AccessControl {
         emit SignerRemoved(signer);
     }
 
+    // mint with rule minter_role
     function mint(address account, uint256 amount) public onlyRole(MINTER_ROLE) {
         _mint(account, amount);
     }
 
+    // burn
     function burn(uint256 amount) public {
         _burn(msg.sender, amount);
     }
 
+    // burn for reason
     function burnFor(uint256 amount, string memory reason) public {
         _burn(msg.sender, amount);
         emit BurnForReason(amount, reason);
     }
 
+    // get transaction claimed
     function getClaimed(string memory message) public view returns (uint256) {
         return claimTransactions[message];
     }
 
+    /**
+        - check address minter != address 0
+        - check amount > 0
+        - verify signature == address minter
+        - check transaction claim?
+        - mint
+     */
     function claim(address to, string memory message, uint256 amount,bytes32 _hashedMessage,  bytes memory _signature) public {
         require(to != address(0), "Invalid claimer");
         require(amount > 0, "Invalid amount");
@@ -69,7 +82,7 @@ contract HappyEnding is ERC20, AccessControl {
     }
 
     function recoverSigner(bytes32 _ethSignedMessageHash, bytes memory _signature)
-        public
+        internal
         pure
         returns (address)
     {
@@ -79,7 +92,7 @@ contract HappyEnding is ERC20, AccessControl {
     }
 
     function splitSignature(bytes memory sig)
-        public
+        internal
         pure
         returns (
             bytes32 r,

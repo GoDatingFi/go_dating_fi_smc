@@ -5,7 +5,7 @@ const sign = async () => {
     const signer = new ethers.Wallet(PRIV_KEY);
     const to = "0x5C60ac4F76b7Fe79532b93F42F4F5D2F415cC57B"; //request
     const amount = 999; //query in DB amount,if amount < amountDB ok
-    const message = "txid"; // generate unique can using now date
+    const message = "txid"; // generate unique can using now date + address user
     const nonce = 123; // == message
     const hash = ethers.utils.hashMessage(to,amount,message,nonce);
     console.log(hash);
