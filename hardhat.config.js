@@ -13,8 +13,13 @@ module.exports = {
       chainId: 97,
       accounts: [process.env.PRIVATE_KEY]
     },
+    matic: {
+      url: "https://matic-mumbai.chainstacklabs.com",
+      chainId: 80001,
+      accounts: [process.env.PRIVATE_KEY]
+    },
   },
   etherscan: {
-    apiKey: process.env.CHAIN_KEY
+    apiKey: process.env.BSC_KEY
   }
 };
