@@ -11,12 +11,11 @@ contract HappyEnding is ERC20, AccessControl, EIP712 {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     mapping(address => bool) public signers;
-    mapping (address => uint) public nonces;
     mapping(string => bool) claimSignatureMarker;
 
     event SignerAdded (address signer);
     event SignerRemoved (address signer);
-    event Claimed(address player, uint256 amount, string nonce, uint256 timestamp);
+    event Claimed(address sender, uint256 amount, string nonce, uint256 timestamp);
 
     constructor() ERC20("Go Dating Earn", "GDE") EIP712("GDE", "1") {
         _setRoleAdmin(OWNER_ROLE, OWNER_ROLE);
