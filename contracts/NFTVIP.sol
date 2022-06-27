@@ -12,9 +12,10 @@ contract NFTVip is ERC721Enumerable, Ownable {
     uint256 public cost = 1000000000000000000;
     bool public paused = false;
     mapping (uint256 => string) private _tokenURIs;
+    mapping (string => bool) private tokenURI;
     IERC20 token;
 
-    event Minted(uint256 indexed newId, string tokenURI, uint256 tokenamount, string idBE);
+    event Minted(uint256 indexed tokenId, string tokenURI, uint256 tokenamount, string idBE);
     constructor(
         string memory _initBaseURI,
         address _tokenAddress
@@ -40,6 +41,7 @@ contract NFTVip is ERC721Enumerable, Ownable {
     // public mint
     function mint(string memory _tokenURI, string memory _idBE, uint256 _tokenamount) public {
         require(!paused, "the contract is paused");
+        require(!tokenURI[_tokenURI], "uri minted");
         uint256 supply = totalSupply();
         if (msg.sender != owner()) {
             require(_tokenamount >= cost, "insufficient funds");
@@ -49,6 +51,7 @@ contract NFTVip is ERC721Enumerable, Ownable {
         _safeMint(msg.sender, newId);
         _setTokenURI(newId, _tokenURI);
         token.transferFrom(msg.sender, address(this), _tokenamount);
+        tokenURI[_tokenURI] = true;
         emit Minted(newId, _tokenURI, _tokenamount, _idBE);
     }
 
