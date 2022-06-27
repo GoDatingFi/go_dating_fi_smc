@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.1;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract NFTVIP is ERC721Enumerable, Ownable {
+contract NFTVip is ERC721Enumerable, Ownable {
     using Strings for uint256;
     string public baseURI;
     uint256 public cost = 1000000000000000000;
@@ -14,7 +14,7 @@ contract NFTVIP is ERC721Enumerable, Ownable {
     mapping (uint256 => string) private _tokenURIs;
     IERC20 token;
 
-    event Minted(uint256 indexed newId, string _tokenURI, uint256 _tokenamount);
+    event Minted(uint256 indexed newId, string tokenURI, uint256 tokenamount, string idBE);
     constructor(
         string memory _initBaseURI,
         address _tokenAddress
@@ -38,7 +38,7 @@ contract NFTVIP is ERC721Enumerable, Ownable {
     }
 
     // public mint
-    function mint(string memory _tokenURI, uint256 _tokenamount) public payable {
+    function mint(string memory _tokenURI, string memory _idBE, uint256 _tokenamount) public {
         require(!paused, "the contract is paused");
         uint256 supply = totalSupply();
         if (msg.sender != owner()) {
@@ -49,11 +49,11 @@ contract NFTVIP is ERC721Enumerable, Ownable {
         _safeMint(msg.sender, newId);
         _setTokenURI(newId, _tokenURI);
         token.transferFrom(msg.sender, address(this), _tokenamount);
-        emit Minted(newId, _tokenURI, _tokenamount);
+        emit Minted(newId, _tokenURI, _tokenamount, _idBE);
     }
 
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal virtual {
-        require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
+        require(_exists(tokenId), "ERC721Metadata: URI set of non existent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
 
