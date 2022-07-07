@@ -73,16 +73,21 @@ contract GDFRANK is ERC721Enumerable, Ownable {
     }
 
     // mint in whitelist
-    function mintWhitelist(bytes32[] calldata merkleProof)
+    function mintWhitelist(bytes32[] calldata merkleProof, uint256 _mintAmount)
         public
         payable
         isValidMerkleProof(merkleProof, whitelistMerkleRoot)
-        isCorrectPayment(whiteListCost, 1)
+        isCorrectPayment(whiteListCost, _mintAmount)
     {
         require(!paused, "the contract is paused");
         uint256 supply = totalSupply();
-        require(supply + 1 <= maxSupply, "max NFT limit exceeded");
-        _safeMint(msg.sender, supply + 1);
+        require(supply + _mintAmount <= maxSupply, "max NFT limit exceeded");
+
+        for (uint256 i = 1; i <= _mintAmount; i++) {
+            uint256 newId = supply + i;
+            addressMintedBalance[msg.sender]++;
+            _safeMint(msg.sender, newId);
+        }
     }
 
     // set merkleroot
