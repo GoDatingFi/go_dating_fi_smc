@@ -20,7 +20,7 @@ contract GDFRANK is ERC721Enumerable, Ownable {
     mapping(address => uint256) public addressMintedBalance;
 
     bytes32 public whitelistMerkleRoot;
-
+    event Minted(uint256 indexed tokenId, address sender);
     constructor(
         string memory _initBaseURI,
         string memory _initNotRevealedUri
@@ -49,6 +49,7 @@ contract GDFRANK is ERC721Enumerable, Ownable {
             uint256 newId = supply + i;
             addressMintedBalance[msg.sender]++;
             _safeMint(msg.sender, newId);
+            emit Minted(newId, msg.sender);
         }
     }
 
@@ -87,6 +88,7 @@ contract GDFRANK is ERC721Enumerable, Ownable {
             uint256 newId = supply + i;
             addressMintedBalance[msg.sender]++;
             _safeMint(msg.sender, newId);
+            emit Minted(newId, msg.sender);
         }
     }
 
